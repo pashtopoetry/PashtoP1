@@ -10,4 +10,4 @@ if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
 fi
 
 # Run gradle
-exec java -jar gradle/wrapper/gradle-wrapper.jar "$@"
+exec java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain "$@"
