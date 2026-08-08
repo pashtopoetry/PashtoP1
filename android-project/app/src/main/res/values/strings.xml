@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">پښتو شعرونه</string>
+    <string name="share_text">شريکول</string>
+    <string name="copy_text">کاپي</string>
+    <string name="copied_toast">کاپي شو!</string>
+    <string name="refreshing">د نويو کلامونو ترلاسه کول...</string>
+    <string name="telegram_channel">testapp_pashto</string>
+</resources>

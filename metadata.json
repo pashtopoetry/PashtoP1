@@ -1,0 +1,6 @@
+{
+  "name": "پښتو شعرونه - Pashto Poetry App",
+  "description": "Native Android Kotlin & React web app for Pashto Poetry (پښتو شعرونه) with copy & share features, video & image support, live Telegram feed sync, and GitHub Actions APK builder.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

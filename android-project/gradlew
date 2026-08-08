@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Create gradle/wrapper directory if not exists
+mkdir -p gradle/wrapper
+
+# Download gradle-wrapper.jar if it's missing
+if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+  echo "Downloading Gradle wrapper jar..."
+  curl -L -s -o gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/v8.5.0/gradle/wrapper/gradle-wrapper.jar
+fi
+
+# Run gradle
+exec java -jar gradle/wrapper/gradle-wrapper.jar "$@"
