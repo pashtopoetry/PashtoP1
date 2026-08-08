@@ -22,6 +22,21 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
+      - name: Restore Gradle Wrapper
+        run: |
+          if [ -d "android-project" ]; then
+            cd android-project
+            if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+              echo "gradle-wrapper.jar is missing! Restoring Gradle Wrapper..."
+              gradle wrapper --gradle-version 8.5
+            else
+              echo "gradle-wrapper.jar exists."
+            fi
+          elif [ ! -f "gradle/wrapper/gradle-wrapper.jar" ] && [ -f "build.gradle" ]; then
+            echo "gradle-wrapper.jar is missing in root! Restoring Gradle Wrapper..."
+            gradle wrapper --gradle-version 8.5
+          fi
+
       - name: Grant Execute Permission for Gradlew
         run: |
           if [ -d "android-project" ] && [ -f "android-project/gradlew" ]; then
