@@ -6,3 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Ensure gradle-wrapper.jar is never ignored by git
+!*gradle-wrapper.jar
+!gradle-wrapper.jar
+!**/gradle-wrapper.jar
+
