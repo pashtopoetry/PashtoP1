@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">پښتو شعرونه - اډمین پینل</string>
+    <string name="admin_dashboard">د شعرونو اډمین پینل</string>
+    <string name="add_poetry">نوی شعر خپرول</string>
+    <string name="poet_name">د شاعر نوم</string>
+    <string name="poetry_text">د شعر متن (دلته خپل شعر ولیکئ)</string>
+    <string name="media_type">د شعر بڼه (رسنۍ)</string>
+    <string name="image_url">د ډیزاین شوي عکس لینک (یا خالي پرېږدئ)</string>
+    <string name="video_url">د ویډیو کلام لینک (یا خالي پرېږدئ)</string>
+    <string name="publish">نشر او خپرول</string>
+    <string name="delete">حذف</string>
+    <string name="confirm_delete">ایا تاسو غواړئ دا شعر د ټولو کاروونکو له فید څخه لیرې کړئ؟</string>
+    <string name="yes">هو</string>
+    <string name="no">نه</string>
+    <string name="deleted_toast">کلام په بریالیتوب سره حذف شو!</string>
+    <string name="published_toast">کلام په بریالیتوب سره خپور او اضافه شو!</string>
+    <string name="text_required">د شعر متن یا کلام لیکل اړین دي!</string>
+    <string name="loading">د کلامونو بارولو په حال کې...</string>
+    <string name="no_posts">تر اوسه پورې کوم کلام نشته. لومړی شعر اضافه کړئ!</string>
+</resources>

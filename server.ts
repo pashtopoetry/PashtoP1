@@ -11,6 +11,28 @@ app.use(express.json());
 
 const ROOT_PROJECT_DIR = process.cwd();
 
+const CUSTOM_POSTS_FILE = path.join(ROOT_PROJECT_DIR, "custom_posts.json");
+
+function readCustomPosts(): any[] {
+  try {
+    if (fs.existsSync(CUSTOM_POSTS_FILE)) {
+      const data = fs.readFileSync(CUSTOM_POSTS_FILE, "utf-8");
+      return JSON.parse(data);
+    }
+  } catch (e) {
+    console.error("Error reading custom posts:", e);
+  }
+  return [];
+}
+
+function writeCustomPosts(posts: any[]) {
+  try {
+    fs.writeFileSync(CUSTOM_POSTS_FILE, JSON.stringify(posts, null, 2), "utf-8");
+  } catch (e) {
+    console.error("Error writing custom posts:", e);
+  }
+}
+
 // Helper function to recursively read directory files (excluding node_modules, dist, git)
 function getFilesRecursively(dir: string, baseDir: string = dir): { path: string; relativePath: string }[] {
   let results: { path: string; relativePath: string }[] = [];
@@ -201,17 +223,84 @@ app.get("/api/telegram/channel", async (req, res) => {
       }
     }
 
+    const customPosts = readCustomPosts();
+    const formattedCustomPosts = customPosts.map((p, idx) => ({
+      id: p.id || `custom_${p.timestamp}_${idx}`,
+      text: p.text || "",
+      timestamp: p.timestamp || Math.floor(Date.now() / 1000),
+      formattedDate: p.formattedDate || new Date((p.timestamp || Math.floor(Date.now() / 1000)) * 1000).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      authorName: p.authorName || "حمزه بابا",
+      authorAvatarUrl: p.authorAvatarUrl || null,
+      viewsCount: p.viewsCount || "10.2K",
+      mediaType: p.mediaType || "NONE",
+      photoUrl: p.photoUrl || null,
+      videoUrl: p.videoUrl || null,
+    }));
+
+    const combinedPosts = [...formattedCustomPosts, ...parsedPosts.reverse()];
+
     res.json({
       ok: true,
       channel: channelName,
       title: channelTitle,
       avatar: channelAvatar,
-      posts: parsedPosts.reverse(),
+      posts: combinedPosts,
     });
   } catch (err: any) {
     console.error("Proxy error:", err);
     res.status(500).json({ error: "Failed to load channel feed" });
   }
+});
+
+// Admin Custom Posts CRUD API endpoints
+app.get("/api/custom-posts", (req, res) => {
+  res.json({ ok: true, posts: readCustomPosts() });
+});
+
+app.post("/api/custom-posts", (req, res) => {
+  const { authorName, text, mediaType, photoUrl, videoUrl } = req.body;
+  if (!text) {
+    return res.status(400).json({ error: "Text field is required" });
+  }
+  const posts = readCustomPosts();
+  const timestamp = Math.floor(Date.now() / 1000);
+  const newPost = {
+    id: `custom_${timestamp}_${Math.floor(Math.random() * 1000)}`,
+    text,
+    timestamp,
+    formattedDate: new Date().toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    authorName: authorName || "حمزه بابا",
+    authorAvatarUrl: null,
+    viewsCount: "10.2K",
+    mediaType: mediaType || "NONE",
+    photoUrl: photoUrl || null,
+    videoUrl: videoUrl || null,
+  };
+  posts.unshift(newPost);
+  writeCustomPosts(posts);
+  res.json({ ok: true, post: newPost });
+});
+
+app.delete("/api/custom-posts/:id", (req, res) => {
+  const { id } = req.params;
+  let posts = readCustomPosts();
+  const initialLength = posts.length;
+  posts = posts.filter((p: any) => String(p.id) !== String(id));
+  if (posts.length === initialLength) {
+    return res.status(404).json({ error: "Post not found" });
+  }
+  writeCustomPosts(posts);
+  res.json({ ok: true, message: "Post deleted successfully" });
 });
 
 // Start Vite middleware or static serving
