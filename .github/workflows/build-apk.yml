@@ -26,15 +26,26 @@ jobs:
         run: |
           if [ -d "android-project" ]; then
             cd android-project
-            if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
-              echo "gradle-wrapper.jar is missing! Restoring Gradle Wrapper..."
-              gradle wrapper --gradle-version 8.5
-            else
-              echo "gradle-wrapper.jar exists."
+            echo "Regenerating Gradle Wrapper in android-project..."
+            gradle wrapper --gradle-version 8.5 || echo "gradle wrapper command failed, using fallback..."
+            
+            # Check if gradle-wrapper.jar is missing or smaller than 10KB (empty or corrupted)
+            if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ] || [ $(wc -c < "gradle/wrapper/gradle-wrapper.jar") -lt 10000 ]; then
+              echo "Downloading gradle-wrapper.jar via curl..."
+              mkdir -p gradle/wrapper
+              curl -sLo gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.5.0/gradle/wrapper/gradle-wrapper.jar
             fi
-          elif [ ! -f "gradle/wrapper/gradle-wrapper.jar" ] && [ -f "build.gradle" ]; then
-            echo "gradle-wrapper.jar is missing in root! Restoring Gradle Wrapper..."
-            gradle wrapper --gradle-version 8.5
+            
+            # Debug output to verify existence and size of gradle-wrapper.jar
+            ls -lh gradle/wrapper/
+          else
+            echo "android-project directory not found. Checking root..."
+            if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ] || [ $(wc -c < "gradle/wrapper/gradle-wrapper.jar") -lt 10000 ]; then
+              echo "Downloading gradle-wrapper.jar via curl to root..."
+              mkdir -p gradle/wrapper
+              curl -sLo gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.5.0/gradle/wrapper/gradle-wrapper.jar
+            fi
+            ls -lh gradle/wrapper/
           fi
 
       - name: Grant Execute Permission for Gradlew
